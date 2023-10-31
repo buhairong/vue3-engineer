@@ -1,10 +1,13 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import visualizer from 'rollup-plugin-visualizer'
 import importElementPlus from 'vite-plugin-element-plus'
+import { resolve } from 'path'
+
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir)
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,7 +25,15 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+      '@': pathResolve('src'),
+    },
+  },
+  server: {
+    port: 4000,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3000',
+      },
+    },
+  },
 })
